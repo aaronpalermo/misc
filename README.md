@@ -44,7 +44,7 @@ Remote image link to google<br>
 
 
 
-<a href ="https://www.google.com">text link to google<\a>
+<a href ="https://www.google.com">text link to google</a>
 
 
 
