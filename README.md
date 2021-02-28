@@ -19,3 +19,21 @@ Remote image link to google<br>
 
 <h1>BIg text</h1>
 <p>paragraph here</p>
+
+# This is an H1
+<h1> This is an H1 </h1>
+
+## This is an H2
+<h2> This is an H2</h2>
+
+### This is an H3
+<h3>This is an H3</h3>
+
+#### This is an H4
+<h4>This is an H4</h4>
+##### This is an H5
+<h5>This is an H5</h5>
+###### This is an H6
+<h6>This is an H6</h6>
+
+There is   a     big        space                here.
