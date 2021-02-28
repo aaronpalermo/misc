@@ -9,4 +9,10 @@ Think of this as a manual proxy when you want to control the content available i
 ### TODO
 I have a cronjob run nightly to remove everything in the yt directory.  I need to put a checkbox on the page to enable persistent videos.  I'll probably do this with a filename prefix or suffix, like MyCoolVid-temp.mp4 for files that will get deleted nighty via 'rm -f *-temp.mp4'
 
-<a href="https://www.google.com">bleh</a>
+<a href="https://www.google.com">text link to google</a>
+
+Local Image link to google
+<a href="https://www.google.com"><img src="smile.png"></a>
+
+Remote image link to google
+<a href="https://www.google.com"><img src="https://sites.psu.edu/siowfa16/files/2016/10/YeDYzSR-10apkm4-300x295.png"></a>
