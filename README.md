@@ -19,10 +19,10 @@ Remote image link to google<br>
 
 
 
-<a href="https://www.google.com">text link to google</a>
+<a href="https://www.google.com"><img src="text link to google"></a>
 <hr>
 Local Image link to google<br>
-<a href="https://www.google.com"><img src="smile.png"></a>
+<a href="http://www.google.com"> <img src="smile.png"> </a>
 <hr>
 Remote image link to google<br>
-<a href="https://www.google.com"><img src="https://sites.psu.edu/siowfa16/files/2016/10/YeDYzSR-10apkm4-300x295.png"></a>
+<a href="http://google.com"> <img src="/siowfa16/files/2016/10/YeDYzSR-10apkm4-300x295.png"> </a>
