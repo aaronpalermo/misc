@@ -22,11 +22,12 @@ from os import environ as env
 ec2 = resource('ec2')
 
 def lambda_handler(event, context):
-    # tz = tzmap()
+    # get the current timezone from the timezone map function
+    tz = tzmap()
     
     # Get current local time in format H:M
-    current_time = datetime.now(tzmap()).strftime("%H:%M")
-    current_time2 = datetime.now(tzmap()).strftime("%H%M")
+    current_time = datetime.now(tz).strftime("%H:%M")
+    current_time2 = datetime.now(tz).strftime("%H%M")
 
     print("Run started at ", current_time)
     
@@ -43,12 +44,12 @@ def lambda_handler(event, context):
     for instance in instances:
         # If it's a weekend and ScheduleWeekend = False, skip the instance
         if ({'Key':'ScheduleStop', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStop', 'Value':current_time2} in instance.tags):
-            if (datetime.today().weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'False'} in instance.tags):
+            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'False'} in instance.tags):
                 print(f"NOT stopping instance {instance.instance_id} since it's a weekend and ScheduleWeekend = False or isn't present")
             else:
                 stopInstances.append(instance.id)
         if ({'Key':'ScheduleStart', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStart', 'Value':current_time2} in instance.tags):
-            if (datetime.today().weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'False'} in instance.tags):
+            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'False'} in instance.tags):
                 print(f"NOT starting instance {instance.instance_id} since it's a weekend and ScheduleWeekend = False or isn't present")
             else:
                 startInstances.append(instance.id)
