@@ -42,17 +42,18 @@ def lambda_handler(event, context):
 
     # Locate all instances that are tagged to start or stop.
     for instance in instances:
-        # If it's a weekend and ScheduleWeekend = False, skip the instance
+        # If it's a weekend and if tags include "ScheduleWeekend = True", then start/stop schedule according to the tags
         if ({'Key':'ScheduleStop', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStop', 'Value':current_time2} in instance.tags):
-            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'False'} in instance.tags):
-                print(f"NOT stopping instance {instance.instance_id} since it's a weekend and ScheduleWeekend = False or isn't present")
-            else:
+            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'True'} in instance.tags):
                 stopInstances.append(instance.id)
-        if ({'Key':'ScheduleStart', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStart', 'Value':current_time2} in instance.tags):
-            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'False'} in instance.tags):
-                print(f"NOT starting instance {instance.instance_id} since it's a weekend and ScheduleWeekend = False or isn't present")
             else:
+                print(f"NOT stopping instance {instance.instance_id} since it's a weekend and ScheduleWeekend = True isn't present")
+
+        if ({'Key':'ScheduleStart', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStart', 'Value':current_time2} in instance.tags):
+            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'True'} in instance.tags):
                 startInstances.append(instance.id)
+            else:
+                print(f"NOT starting instance {instance.instance_id} since it's a weekend and ScheduleWeekend = True isn't present")                
     
     # shut down all instances tagged to stop. 
     if len(stopInstances) > 0:
