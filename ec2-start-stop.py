@@ -29,47 +29,53 @@ def lambda_handler(event, context):
     current_time = datetime.now(tz).strftime("%H:%M")
     current_time2 = datetime.now(tz).strftime("%H%M")
 
-    print("Run started at ", current_time)
+    print(f"{datetime.now(tz)} Run started at ", current_time)
     
     # Find all the instances where any tag starts with "Schedule" 
     filters = [{ 'Name': 'tag-key', 'Values': ['Schedule*'] }]
     
     # Search all the instances which contains scheduled filter 
-    instances = ec2.instances.filter(Filters=filters)
-
+    print(f"{datetime.now(tz)} About to query instances")
+    instances = list(ec2.instances.filter(Filters=filters))
+    print(f"{datetime.now(tz)} Retrieved all instances tagged with Schedule*, that's a total of {len(instances)}")
     stopInstances = []   
     startInstances = []   
 
     # Locate all instances that are tagged to start or stop.
+    print(f"{datetime.now(tz)} About to iterate through instances")
     for instance in instances:
-        # If it's a weekend and if tags include "ScheduleWeekend = True", then start/stop schedule according to the tags
+        print(f'{datetime.now(tz)} processing instance id {instance.id} with tags {instance.tags}')
+        # If it's a weekend and ScheduleWeekend = False, skip the instance
         if ({'Key':'ScheduleStop', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStop', 'Value':current_time2} in instance.tags):
-            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'True'} in instance.tags):
-                stopInstances.append(instance.id)
-            else:
+            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'True'} not in instance.tags):
                 print(f"NOT stopping instance {instance.instance_id} since it's a weekend and ScheduleWeekend = True isn't present")
-
-        if ({'Key':'ScheduleStart', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStart', 'Value':current_time2} in instance.tags):
-            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'True'} in instance.tags):
-                startInstances.append(instance.id)
             else:
-                print(f"NOT starting instance {instance.instance_id} since it's a weekend and ScheduleWeekend = True isn't present")                
+                stopInstances.append(instance.id)
+        if ({'Key':'ScheduleStart', 'Value':current_time} in instance.tags) or ({'Key':'ScheduleStart', 'Value':current_time2} in instance.tags):
+            if (datetime.now(tz).weekday() > 4) and ({'Key':'ScheduleWeekend', 'Value':'True'} not in instance.tags):
+                print(f"NOT starting instance {instance.instance_id} since it's a weekend and ScheduleWeekend = True isn't present")
+            else:
+                startInstances.append(instance.id)               
+    print(f"{datetime.now(tz)} Finished iterating through instances")
     
     # shut down all instances tagged to stop. 
     if len(stopInstances) > 0:
         # perform the shutdown
+        print(f"{datetime.now(tz)} About to stop instances")
         stop = ec2.instances.filter(InstanceIds=stopInstances).stop()
-        print("Stopping instance: ", stop)
+        print(f"{datetime.now(tz)} Instances stopped:", stop)
     else:
-        print("No instances to shutdown.")
+        print(f"{datetime.now(tz)} No instances to shutdown.")
 
     # start instances tagged to stop. 
     if len(startInstances) > 0:
         # perform the start
+        print(f"{datetime.now(tz)} About to start instances")
         start = ec2.instances.filter(InstanceIds=startInstances).start()
-        print("Starting instance: ", start)
+        print(f"{datetime.now(tz)} Starting instances: ", start)
+        print(f"{datetime.now(tz)} Started instances")
     else:
-        print("No instances to start.")
+        print(f"{datetime.now(tz)} No instances to start.")
         
 def tzmap():
     tzdict= {
